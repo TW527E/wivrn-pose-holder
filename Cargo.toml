@@ -1,0 +1,17 @@
+[package]
+name = "xr_pose_holder"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "OpenXR API layer that freezes controllers at their last valid pose when tracking is lost (WiVRn / xrizer)"
+
+[lib]
+name = "xr_pose_holder"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+openxr-sys = { version = "0.14", default-features = false }
+
+[profile.release]
+panic = "abort"
+lto = true

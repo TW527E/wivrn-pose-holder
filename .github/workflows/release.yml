@@ -1,0 +1,75 @@
+name: Release
+
+# Cargo.toml 的版本號改了、而且還沒有對應的 tag 時，編譯並發佈 Release。
+on:
+  push:
+    branches: [main, master]
+    paths: [Cargo.toml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    # 用舊一點的 glibc 編譯，產物在比較舊的發行版上也能載入。
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 需要完整歷史和 tag 來產生更新內容
+
+      - name: Read version
+        id: version
+        run: |
+          version=$(grep -m1 '^version = ' Cargo.toml | cut -d'"' -f2)
+          tag="v$version"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            echo "$tag 已經發佈過，跳過。"
+            echo "new=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Test
+        if: steps.version.outputs.new == 'true'
+        run: cargo test
+
+      - name: Build
+        if: steps.version.outputs.new == 'true'
+        run: cargo build --release
+
+      - name: Package
+        if: steps.version.outputs.new == 'true'
+        id: package
+        run: |
+          name="wivrn-pose-holder-${{ steps.version.outputs.tag }}-x86_64"
+          mkdir "$name"
+          cp target/release/libxr_pose_holder.so install.sh README*.md LICENSE "$name/"
+          tar czf "$name.tar.gz" "$name"
+          echo "asset=$name.tar.gz" >> "$GITHUB_OUTPUT"
+
+      - name: Release notes
+        if: steps.version.outputs.new == 'true'
+        run: |
+          # 上一個 release 以來的 commits；第一次發佈就列出全部。
+          previous=$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || true)
+          range="${previous:+$previous..}HEAD"
+          {
+            if [ -n "$previous" ]; then echo "## $previous 以來的變更"; else echo "## 變更"; fi
+            echo
+            git log --no-merges --pretty='- %s (%h)' "$range"
+          } > notes.md
+          cat notes.md
+
+      - name: Publish
+        if: steps.version.outputs.new == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            --target "$GITHUB_SHA" \
+            --title "${{ steps.version.outputs.tag }}" \
+            --notes-file notes.md \
+            "${{ steps.package.outputs.asset }}"

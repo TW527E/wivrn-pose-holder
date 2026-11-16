@@ -86,4 +86,4 @@ cargo test
 
 ## 许可
 
-MIT。做法来自 z3y 的 driver-pose-holder（MIT），代码是重新写的。
+[MIT](LICENSE)。做法来自 z3y 的 [driver-pose-holder](https://github.com/z3y/driver-pose-holder)（[MIT](https://github.com/z3y/driver-pose-holder/blob/main/LICENSE.md)），代码是重新写的。最初是在 [z3y 的这条推文](https://x.com/z3y00/status/2121384801005674828)看到的。

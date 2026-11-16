@@ -86,4 +86,4 @@ Change `version` in `Cargo.toml` and push to `master` or `main`. GitHub Actions 
 
 ## License
 
-MIT. The approach comes from z3y's driver-pose-holder (MIT); the code is written from scratch.
+[MIT](LICENSE). The approach comes from z3y's [driver-pose-holder](https://github.com/z3y/driver-pose-holder) ([MIT](https://github.com/z3y/driver-pose-holder/blob/main/LICENSE.md)); the code is written from scratch. I first came across it in [this post by z3y](https://x.com/z3y00/status/2121384801005674828).

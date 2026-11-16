@@ -15,7 +15,7 @@ jobs:
     # 用舊一點的 glibc 編譯，產物在比較舊的發行版上也能載入。
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0 # 需要完整歷史和 tag 來產生更新內容
 

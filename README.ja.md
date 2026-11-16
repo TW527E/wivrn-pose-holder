@@ -86,4 +86,4 @@ cargo test
 
 ## ライセンス
 
-MIT。手法は z3y の driver-pose-holder（MIT）によるもので、コードは新しく書いています。
+[MIT](LICENSE)。手法は z3y の [driver-pose-holder](https://github.com/z3y/driver-pose-holder)（[MIT](https://github.com/z3y/driver-pose-holder/blob/main/LICENSE.md)）によるもので、コードは新しく書いています。きっかけは [z3y のこのポスト](https://x.com/z3y00/status/2121384801005674828)です。
